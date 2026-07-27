@@ -1,0 +1,85 @@
+{
+  "prereg": {
+    "experiment": "AXIOM Context-Window Resilience",
+    "version": "v0.2",
+    "supersedes": "v0.1",
+    "hypothesis_H1": "Under context-window stress, AXIOM-prompted outputs retain higher analytical quality than baseline, hedged-baseline, and generic structured outputs, measured on a rubric that does not reward AXIOM-specific vocabulary or section structure.",
+    "null_hypothesis": "AXIOM does not improve analytical quality under context stress, or any advantage is explained by verbosity, generic structure, the epistemic hedging clause, evaluator bias, rubric isomorphism, or case selection.",
+    "primary_metric": "degradation of primary_total from full to fragmented context, compared between conditions at the case level",
+    "primary_total_definition": "sum of the 8 rubric dimensions tagged cue=none or cue=both, max 16",
+    "diagnostic_metric": "cued_total, sum of the 5 dimensions tagged cue=axiom_only, max 10",
+    "secondary_metrics": [
+      "calibration",
+      "no_invention",
+      "primary_total per 1000 completion tokens",
+      "false_goodhart_rate on C10",
+      "restraint on adversarial cases"
+    ],
+    "conditions": [
+      "baseline",
+      "baseline_hedged",
+      "generic_structured",
+      "axiom"
+    ],
+    "context_levels": [
+      "full",
+      "compressed",
+      "fragmented"
+    ],
+    "main_cases": [
+      "C1_support_tickets",
+      "C2_soc_alert_closure",
+      "C3_maintenance_compliance",
+      "C4_school_reading",
+      "C5_hospital_handoff",
+      "C7_low_evidence",
+      "C8_sensitive_interpersonal",
+      "C9_constitutive_uncertainty",
+      "C10_capacity_not_gaming"
+    ],
+    "negative_control_cases": [
+      "C6_negative_control_extraction"
+    ],
+    "adversarial_cases": [
+      "C7_low_evidence",
+      "C8_sensitive_interpersonal",
+      "C9_constitutive_uncertainty",
+      "C10_capacity_not_gaming"
+    ],
+    "runs_per_cell": 3,
+    "scoring": "blind, headings and inline heading prefixes stripped, emphasis removed, enumeration normalised, order randomised, judge given the exact context the analyst received",
+    "token_control": "max_new_tokens identical; truncated generations excluded; per-1k reported",
+    "exclusion_criteria": [
+      "empty generation",
+      "finish_reason == length (truncated)",
+      "API error",
+      "judge output not parseable after 2 retries"
+    ],
+    "alpha": 0.05,
+    "test_sidedness": "one_sided_greater",
+    "multiplicity_correction": "holm",
+    "primary_test": "paired Wilcoxon on case-level (full minus fragmented) deltas, axiom vs generic_structured",
+    "min_blinding_audit_chance": 0.25,
+    "max_blinding_audit_accuracy": 0.4,
+    "min_mean_weighted_kappa": 0.4,
+    "max_negative_control_advantage_points": 1.0,
+    "max_false_goodhart_rate_axiom": 0.3,
+    "min_adversarial_restraint_mean": 1.0,
+    "token_normalisation_test": "axiom per_1k must not be significantly below generic per_1k at alpha",
+    "verdict_gates": [
+      "blinding_ok",
+      "irr_ok",
+      "negative_control_ok",
+      "adversarial_ok",
+      "token_ok"
+    ],
+    "analysis_plan": "Mixed-effects model primary_total ~ C(condition) * level_idx with case as random effect. Primary claim requires axiom to beat generic_structured on the case-level degradation delta after Holm correction, with all five verdict gates passing. cued_total is reported but never used to support H1.",
+    "known_unclosed_biases": [
+      "rubric and adversarial cases authored by a party with prior exposure to AXIOM",
+      "five of nine main cases are metric-versus-outcome cases carried over from v0.1"
+    ]
+  },
+  "sha256": "bcb0e5f5d8c145b1edc1db79ec6e8921af9dd836af00598dd3a674bf601d0f34",
+  "locked_utc": "2026-07-27T01:44:50.054351+00:00",
+  "external_witness": ""
+}
